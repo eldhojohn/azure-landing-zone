@@ -55,3 +55,16 @@ module "compute" {
 
   tags = local.tags
 }
+
+module "bastion" {
+  source = "../../modules/bastion"
+
+  name                = "bas-hub-prod-aue-001"
+  public_ip_name      = "pip-bas-hub-prod-aue-001"
+  location            = local.location
+  resource_group_name = module.resource_groups.network_rg_name
+  subnet_id           = module.networking.bastion_subnet_id
+  sku                 = "Standard"
+
+  tags = local.tags
+}

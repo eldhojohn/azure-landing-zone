@@ -1,0 +1,13 @@
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+tfplan
+*.tfplan
+crash.log
+*.pem
+*.key
+.vscode/
+Thumbs.db
+Desktop.ini

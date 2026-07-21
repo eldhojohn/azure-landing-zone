@@ -18,3 +18,21 @@ Desktop.ini
 *.tfplan
 platform-state-backup-*.json
 **/platform-state-backup-*.json
+
+# Terraform working directories
+**/.terraform/*
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Terraform plan files
+*.tfplan
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Local state backup exports
+**/*state-backup*.json
+**/*state-before-*.json

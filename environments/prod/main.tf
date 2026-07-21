@@ -1,4 +1,5 @@
 data "azurerm_client_config" "current" {}
+
 module "resource_groups" {
   source = "../../modules/resource-groups"
 
@@ -24,6 +25,7 @@ module "nsg" {
   location             = local.location
   management_subnet_id = module.networking.management_subnet_id
   workload_subnet_id   = module.networking.workload_subnet_id
+
   admin_public_ip_cidrs = [
     "124.148.89.198/32",
     "131.242.133.131/32"
@@ -60,19 +62,20 @@ module "compute" {
   tags = local.tags
 }
 
-#module "bastion" {
-# source = "../../modules/bastion"
+# Bastion is currently disabled.
 #
-# name                = "bas-hub-prod-aue-001"
-#public_ip_name      = "pip-bas-hub-prod-aue-001"
-#location            = local.location
-#resource_group_name = module.resource_groups.network_rg_name
-#subnet_id           = module.networking.bastion_subnet_id
-#sku                 = "Standard"
+# module "bastion" {
+#   source = "../../modules/bastion"
 #
-# tags = local.tags
-#}
-
+#   name                = "bas-hub-prod-aue-001"
+#   public_ip_name      = "pip-bas-hub-prod-aue-001"
+#   location            = local.location
+#   resource_group_name = module.resource_groups.network_rg_name
+#   subnet_id           = module.networking.bastion_subnet_id
+#   sku                 = "Standard"
+#
+#   tags = local.tags
+# }
 
 module "vpn_gateway" {
   source = "../../modules/vpn-gateway"
@@ -107,6 +110,46 @@ module "key_vault" {
   resource_group_name = module.resource_groups.security_rg_name
   location            = local.location
   tenant_id           = data.azurerm_client_config.current.tenant_id
+
+  enable_rbac_authorization = true
+  sku_name                  = "standard"
+
+  tags = local.tags
+}
+
+resource "azurerm_role_assignment" "key_vault_administrator" {
+  scope                = module.key_vault.id
+  role_definition_name = "Key Vault Administrator"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+module "key_vault_private_dns" {
+  source = "../../modules/private-dns"
+
+  zone_name           = "privatelink.vaultcore.azure.net"
+  resource_group_name = module.resource_groups.security_rg_name
+  virtual_network_id  = module.networking.vnet_id
+
+  tags = local.tags
+}
+
+module "key_vault_private_endpoint" {
+  source = "../../modules/private-endpoint"
+
+  name                = "pep-kv-qps-prod-aue-001"
+  location            = local.location
+  resource_group_name = module.resource_groups.security_rg_name
+  subnet_id           = module.networking.workload_subnet_id
+
+  private_connection_resource_id = module.key_vault.id
+
+  subresource_names = [
+    "vault"
+  ]
+
+  private_dns_zone_ids = [
+    module.key_vault_private_dns.id
+  ]
 
   tags = local.tags
 }
@@ -144,11 +187,6 @@ module "key_vault_diagnostics" {
   ]
 
   log_analytics_destination_type = "Dedicated"
-
-  depends_on = [
-    module.key_vault,
-    module.log_analytics
-  ]
 }
 
 module "vpn_gateway_diagnostics" {
@@ -167,10 +205,4 @@ module "vpn_gateway_diagnostics" {
   ]
 
   log_analytics_destination_type = "Dedicated"
-
-  depends_on = [
-    module.vpn_gateway,
-    module.log_analytics
-  ]
 }
-

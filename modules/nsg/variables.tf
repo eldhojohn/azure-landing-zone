@@ -18,7 +18,7 @@ variable "tags" {
   type = map(string)
 }
 
-variable "admin_public_ip_cidr" {
+variable "admin_public_ip_cidrs" {
   description = "Public administrator IP allowed to access management systems"
-  type        = string
+  type        = list(string)
 }

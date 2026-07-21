@@ -11,3 +11,10 @@ crash.log
 .vscode/
 Thumbs.db
 Desktop.ini
+
+# Terraform state and local backups
+*.tfstate
+*.tfstate.*
+*.tfplan
+platform-state-backup-*.json
+**/platform-state-backup-*.json

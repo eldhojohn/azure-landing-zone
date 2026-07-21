@@ -1,19 +1,18 @@
 locals {
-
-  # Environment
-  environment = "prod"
-
-  # Azure Region
   location    = "Australia East"
   region_code = "aue"
 
-  # Common Tags
   tags = {
-    ManagedBy   = "Terraform"
-    Environment = "Production"
-    Project     = "Azure Landing Zone"
-    Owner       = "CAP10"
-    CostCentre  = "IT"
+    Organisation       = var.organisation
+    Department         = var.department
+    Application        = var.application_name
+    Environment        = var.environment
+    Owner              = var.owner
+    SupportTeam        = var.support_team
+    CostCentre         = var.cost_centre
+    DataClassification = var.data_classification
+    Criticality        = var.criticality
+    ManagedBy          = "Terraform"
+    IaC                = "Terraform"
   }
-
 }

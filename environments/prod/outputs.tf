@@ -52,3 +52,44 @@ output "log_analytics_customer_id" {
   description = "Log Analytics Workspace customer ID"
   value       = module.log_analytics.workspace_id
 }
+
+output "compute_resource_group_name" {
+  description = "Name of the shared compute resource group"
+  value       = module.resource_groups.compute_rg_name
+}
+
+
+output "storage_private_dns_zone_id" {
+  description = "Resource ID of the shared Blob Storage Private DNS zone"
+  value       = module.storage_private_dns.id
+}
+
+output "firewall_id" {
+  description = "Azure Firewall resource ID"
+  value       = module.firewall.id
+}
+
+output "firewall_private_ip" {
+  description = "Azure Firewall private IP"
+  value       = module.firewall.private_ip_address
+}
+
+output "firewall_policy_id" {
+  description = "Azure Firewall Policy ID"
+  value       = module.firewall.policy_id
+}
+
+output "appservice_integration_subnet_id" {
+  description = "Subnet used for App Service VNet Integration."
+  value       = module.networking.appservice_integration_subnet_id
+}
+
+output "private_endpoint_subnet_id" {
+  description = "Subnet used for private endpoints."
+  value       = module.networking.private_endpoint_subnet_id
+}
+
+output "application_gateway_subnet_id" {
+  description = "Subnet used for Application Gateway."
+  value       = module.networking.application_gateway_subnet_id
+}

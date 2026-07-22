@@ -41,6 +41,7 @@ module "route_tables" {
   location             = local.location
   management_subnet_id = module.networking.management_subnet_id
   workload_subnet_id   = module.networking.workload_subnet_id
+  firewall_private_ip  = module.firewall.private_ip_address
 
   tags = local.tags
 }
@@ -194,6 +195,52 @@ module "vpn_gateway_diagnostics" {
 
   name                       = "diag-vpn-gateway-to-law"
   target_resource_id         = module.vpn_gateway.id
+  log_analytics_workspace_id = module.log_analytics.id
+
+  log_category_groups = [
+    "allLogs"
+  ]
+
+  metric_categories = [
+    "AllMetrics"
+  ]
+
+  log_analytics_destination_type = "Dedicated"
+}
+
+module "storage_private_dns" {
+  source = "../../modules/private-dns"
+
+  zone_name           = "privatelink.blob.core.windows.net"
+  resource_group_name = module.resource_groups.security_rg_name
+  virtual_network_id  = module.networking.vnet_id
+
+  tags = local.tags
+}
+
+module "firewall" {
+  source = "../../modules/firewall"
+
+  firewall_name        = "afw-hub-prod-aue-001"
+  firewall_policy_name = "afwp-hub-prod-aue-001"
+  public_ip_name       = "pip-afw-hub-prod-aue-001"
+
+  resource_group_name = module.resource_groups.network_rg_name
+  location            = local.location
+
+  subnet_id = module.networking.firewall_subnet_id
+
+  sku_name = "AZFW_VNet"
+  sku_tier = "Standard"
+
+  tags = local.tags
+}
+
+module "firewall_diagnostics" {
+  source = "../../modules/diagnostic-settings"
+
+  name                       = "diag-azure-firewall-to-law"
+  target_resource_id         = module.firewall.id
   log_analytics_workspace_id = module.log_analytics.id
 
   log_category_groups = [

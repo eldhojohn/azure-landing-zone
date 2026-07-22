@@ -22,3 +22,20 @@ output "gateway_subnet_id" {
   description = "Resource ID of the Azure GatewaySubnet"
   value       = azurerm_subnet.gateway.id
 }
+
+output "firewall_subnet_id" {
+  description = "Azure Firewall subnet ID"
+  value       = azurerm_subnet.firewall.id
+}
+
+output "appservice_integration_subnet_id" {
+  value = azurerm_subnet.appservice_integration.id
+}
+
+output "private_endpoint_subnet_id" {
+  value = azurerm_subnet.private_endpoints.id
+}
+
+output "application_gateway_subnet_id" {
+  value = azurerm_subnet.application_gateway.id
+}

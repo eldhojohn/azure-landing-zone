@@ -17,3 +17,8 @@ variable "workload_subnet_id" {
 variable "tags" {
   type = map(string)
 }
+
+variable "firewall_private_ip" {
+  description = "Private IP address of the Azure Firewall used as the workload default-route next hop."
+  type        = string
+}
